@@ -6,7 +6,7 @@ import csv
 geneinfo_file=open("hs_geneinfo.csv", "r")
 
 # *.id_csv files to be modified
-M13_DE=open("./ctrl_vs_mutant.is_csv", "r")
+M13_DE=open("./ctrl_vs_mutant.id_csv", "r")
 
 dir="results/"
 
