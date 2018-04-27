@@ -1,40 +1,38 @@
 import csv
-import bisect
-class GeneInfo(object):
-    def __init__(self, symbol, name, entrezID, mouseGDB_ID, refseq_ID):
-        self.name = name
-        self.symbol = symbol
-        self.entrezID = entrezID
-        self.mouseGDB_ID = mouseGDB_ID
-        self.refseqID = refseq_ID
+                                              #vvvvvvvvvvvvvvvvvv#
+# this file was downloaded with a perl script '01_get_geneinfo.pl' obtained from the affiliated page
+# https://www.genenames.org/cgi-bin/download?col=gd_app_sym&col=gd_app_name&col=gd_pub_eg_
+# id&col=gd_mgd_id&col=gd_pub_refseq_ids&status=Approved&status=Entry+Withdrawn&status_opt=2&where=&order_by=gd_app_sym_sort&format=LWP&limit=&hgnc_dbtag=on&submit=submit
+geneinfo_file=open("hs_geneinfo.csv", "r")
 
+# *.id_csv files to be modified
+M13_DE=open("./ctrl_vs_mutant.is_csv", "r")
 
-geneinfo_file=open("hs_geneinfo.csv", "r") #columns gene_symbol, geneDescription, ...
-M13_DE=open("DE_genesM13.id_csv", "r")
-MV4_DE=open("DE_genesMV4.id_csv", "r")
-M13_all=open("M13_DMSO_B_vs_M13_drug.id_csv", "r")
-MV4_all=open("MV4_DMSO_B_vs_MV4_drug.id_csv", "r")
-dir="/proj/my/project/folder/"
-#gl=genelist_file.readlines()
+dir="results/"
+
+#make a dictionary with the entire line for a substring of the same line
+#potentially, double entries will be overwritten, however, gene symbols should be uniqe in GI
 GI=geneinfo_file.readlines()
 GI_dict={}
 for line in GI:
     l=line.rsplit('\t')
     GI_dict[l[0]] = l
-
+print(GI_dict)
+# construct a list of new strings. searches in the dictionary for gene name (info[a[1]][1]) and mouse reference ID. adds to string
 def get_geneinfo(genelist_file, info):
     gl = genelist_file.readlines()
-    count = 0
+    #count = 0
     nlist = []
     for line in gl:
+        #print(line)
         #a=line.rstrip()
         a = line.rsplit('\t')
         try:
-            addInfo = line.rstrip() + '\t' + info[a[1]][1]+'\n'
+            #addInfo = line.rstrip() + '\t' + info[a[1]][1]+'\n'
             info_new= a[0] + '\t' + \
                       a[2] + '\t' + \
                       a[1] + '\t' + \
-                      info[a[1]][1] + '\t' + \
+                      "'"+info[a[1]][1] + "'" + '\t' + \
                       info[a[1]][3] + '\t' + \
                       a[3] + '\t' + \
                       a[4] + '\t' + \
@@ -43,13 +41,27 @@ def get_geneinfo(genelist_file, info):
                       a[7] + '\t' + \
                       a[8]
             nlist.append(info_new)
+            #print(info_new)
         except:
-            continue
-        if count > 10:
-            break
+            info_new = a[0] + '\t' + \
+                       a[2] + '\t' + \
+                       a[1] + '\t' + \
+                       'NA' + '\t' + \
+                       'NA' + '\t' + \
+                       a[3] + '\t' + \
+                       a[4] + '\t' + \
+                       a[5] + '\t' + \
+                       a[6] + '\t' + \
+                       a[7] + '\t' + \
+                       a[8]
+            nlist.append(info_new)
+            continue #the header line will throw an exception, genes present in the subset but not the geneinfo file as well
+        #if count > 10: #just for testing, the script is slow
+        #    break
         #count += 1
     return(nlist)
 
+# define a function that adds the header line and iterates
 def write_csv(directory, name, glist):
     with open(str(directory+name),'w') as resultFile:
         #write first line
@@ -63,16 +75,6 @@ def write_csv(directory, name, glist):
             resultFile.write(row)
     return 0
 a=get_geneinfo(M13_DE, GI_dict)
-write_csv(dir, 'M13_JP4_094_DE_p_0_01.csv', a)
-
-b=get_geneinfo(MV4_DE, GI_dict)
-write_csv(dir, 'MV4_JP4_094_DE_p_0_01.csv', b)
-
-c=get_geneinfo(M13_all, GI_dict)
-write_csv(dir, 'M13_JP4_094_all_genes.csv', c)
-
-d=get_geneinfo(MV4_all, GI_dict)
-write_csv(dir, 'MV4_JP4_094_all_genes.csv', d)
-
+write_csv(dir, 'testa.csv', a)
 
 
