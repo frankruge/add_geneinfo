@@ -9,35 +9,18 @@ class GeneInfo(object):
         self.refseqID = refseq_ID
 
 
-geneinfo_file=open("/proj/MLL-AF9_Frank/betti_star/07_DeSeq2_alt/GUNNING/hs_geneinfo.csv", "r")
-M13_DE=open("/proj/MLL-AF9_Frank/betti_star/07_DeSeq2_alt/GUNNING/DE_genes_P_0_01_M13_DMSO_B_vs_M13_JP4_094.id_csv", "r")
-MV4_DE=open("/proj/MLL-AF9_Frank/betti_star/07_DeSeq2_alt/GUNNING/DE_genes_P_0_01_MV4_DMSO_B_vs_MV4_JP4_094.id_csv", "r")
-M13_all=open("/proj/MLL-AF9_Frank/betti_star/07_DeSeq2_alt/GUNNING/M13_DMSO_B_vs_M13_JP4_094.id_csv", "r")
-MV4_all=open("/proj/MLL-AF9_Frank/betti_star/07_DeSeq2_alt/GUNNING/MV4_DMSO_B_vs_MV4_JP4_094.id_csv", "r")
-dir="/proj/MLL-AF9_Frank/betti_star/07_DeSeq2_alt/GUNNING/"
+geneinfo_file=open("hs_geneinfo.csv", "r") #columns gene_symbol, geneDescription, ...
+M13_DE=open("DE_genesM13.id_csv", "r")
+MV4_DE=open("DE_genesMV4.id_csv", "r")
+M13_all=open("M13_DMSO_B_vs_M13_drug.id_csv", "r")
+MV4_all=open("MV4_DMSO_B_vs_MV4_drug.id_csv", "r")
+dir="/proj/my/project/folder/"
 #gl=genelist_file.readlines()
 GI=geneinfo_file.readlines()
 GI_dict={}
 for line in GI:
     l=line.rsplit('\t')
     GI_dict[l[0]] = l
-
-#print(GI_dict)
-'''
-count=0
-nlist=[]
-tmp=list()
-for line in gl:
-    a=line.rsplit('\t')
-    try:
-        addInfo=line + GI_dict[a[1]][1]
-        nlist.append(addInfo)
-    except:
-        continue
-    if count>10:
-        break
-    count+=1
-'''
 
 def get_geneinfo(genelist_file, info):
     gl = genelist_file.readlines()
